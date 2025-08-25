@@ -1,0 +1,121 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorizer</title>
+    <meta name="description" content="Colorizer turns your text into colors in real time. Type any word or sentence and see it come alive with unique colors. Fun, interactive, and instant visual feedback!">
+</head>
+<body>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 12px 15px;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #666;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        #rgb-display {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: monospace;
+            user-select: none;
+            font-size: 1rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        #rgb-display:active {
+            transform: translateX(-50%) scale(0.95);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        @media (max-width: 500px) {
+            #rgb-display {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+
+    <input type="text" id="sentence" placeholder="Type something..." />
+    <div id="rgb-display">(0, 0, 0)</div>
+
+    <script>
+        const input = document.getElementById('sentence');
+        const rgbDisplay = document.getElementById('rgb-display');
+
+        input.addEventListener('input', async () => {
+            const text = input.value.trim();
+            if (!text) return;
+
+            const lastWord = text.split(/\s+/).pop();
+            if (!lastWord) return;
+
+            try {
+                const res = await fetch('/color', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: lastWord })
+                });
+                const data = await res.json();
+
+                const { r, g, b } = data;
+                document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+                rgbDisplay.textContent = `(${r}, ${g}, ${b})`;
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        rgbDisplay.addEventListener('click', () => {
+            const textToCopy = rgbDisplay.textContent;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    rgbDisplay.textContent = `${textToCopy} ✅`;
+                    setTimeout(() => {
+                        rgbDisplay.textContent = textToCopy;
+                    }, 1000);
+                })
+                .catch(err => console.error('Copy failed', err));
+        });
+    </script>
+</body>
+</html>
