@@ -1,0 +1,23 @@
+[package]
+name = "colorizer"
+version = "0.1.0"
+edition = "2021"
+default-run = "colorizer"
+authors = ["AndriaK <hey@andriaK.com>"]
+description = "A web server that maps input text to colors using ONNX embeddings and Actix Web."
+license = "MIT"
+repository = "https://github.com/8ria/Colorizer"
+readme = "README.md"
+keywords = ["ai", "onnx", "actix", "color", "embedding"]
+categories = ["web-programming", "science", "art"]
+
+[dependencies]
+actix-files = "0.6.6"
+actix-governor = "0.8.0"
+actix-web = "4.11.0"
+anyhow = "1.0.99"
+ndarray = "0.15.6"
+ort = "1.16.3"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0"
+tokenizers = "0.21.4"
