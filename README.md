@@ -133,4 +133,4 @@ Colorizer/
 
 ## License
 
-MIT © AndriaK
+MIT License © [AndriaK](mailto:hey@andriaK.com)
